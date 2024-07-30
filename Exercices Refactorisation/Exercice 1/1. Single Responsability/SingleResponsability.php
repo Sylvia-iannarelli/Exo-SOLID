@@ -5,66 +5,74 @@
 
 class NoBalanceAvailableException extends \Exception {}
 
-class Product {
-    public function getValue() {}
+class Product
+{
+    private $value;
+
+    public function getValue() {
+        return $this->value;
+    }
 }
 
-class Account 
+class ProductCalculator
 {
-    public function getBalance() {}
-    public function setBalance() {}
-        
-    public function haveBalanceAvailable(Customer $customer, $value)
+    public function calculateTotalValue(array $products)
     {
-        return $this->getBalance() >= $value;
+        $value = 0;
+
+        foreach ($products as $product) {
+            $value += $product->getValue();
+        }
+
+        return $value;
+    }
+}
+
+class Account
+{
+    private $balance;
+
+    public function getBalance() {
+        return $this->balance;
     }
 
+    public function setBalance($balance) {
+        $this->balance = $balance;
+    }
+    
+    public function debit($amount) {
+        if (!$this->balance < $amount) {
+            throw new NoBalanceAvailableException();
+        }
+        $this->balance -= $amount;
+    }
+
+    // public function haveBalanceAvailable($amount)
+    // {
+    //     return $this->balance >= $amount;
+    // }
+
 }
 
-class Customer 
+class Customer
 {
-    public function getAccount() {}
+    private $account;
+
+    public function getAccount() {
+        return $this->account;
+    }
+
+    public function setAccount(Account $account) {
+        $this->account = $account;
+    }
 }
 
 class Sale
 {
-    private $account;
-    private $customer;
-    public function __construct(Account $account, Customer $customer) {
-        $this->account = $account;
-        $this->customer = $customer;
-    }
-
-    public function getValue() {}
-    public function setValue() {}
-    
-    public function sell(array $products)
+    public function sell(array $products, Customer $customer, ProductCalculator $productCalculator)
     {
-        $value = $this->calculateTotalValue($products);
+        $value = $productCalculator->calculateTotalValue($products);
         
-        if (!$this->account->haveBalanceAvailable($this->customer, $value)) {
-            throw new NoBalanceAvailableException();
-        }
-
-        /*..... something.....*/
-        
-        $this->setValue($value);
-        $this->calculateBalance($this->customer);
-    }
-
-    public function calculateBalance()
-    {
-        $this->account->setBalance($this->account->getBalance() - $this->getValue());
-    }
-    
-    private function calculateTotalValue(array $products)
-    {
-        $value = 0;
-    
-        foreach ($products as $product) {
-            $value += $product->getValue();
-        }
-    
-        return $value;
+        $customer->getAccount()->debit($value);
     }
 }
