@@ -2,14 +2,18 @@
 
 // TODO refactoriser le code pour respecter le Principe de Ségregation des Interface de la programmation SOLID
 
-interface Vehicle 
+interface CanTurnOn 
 {
 	public function turnOn();
-	public function run();
 	public function fuel();
 }
 
-class Motorcycle implements Vehicle
+interface CanRun 
+{
+	public function run();
+}
+
+class Motorcycle implements CanTurnOn, CanRun
 {
     public function turnOn()
     {
@@ -27,20 +31,10 @@ class Motorcycle implements Vehicle
     }
 }
 
-class Bicycle implements Vehicle 
+class Bicycle implements CanRun 
 {
-	public function turnOn() 
-	{
-		//does nothing, because bicycles doesn't turn on
-	}
-	
 	public function run() 
 	{
 		echo 'Bicycle running...';
-	}
-	
-	public function fuel() 
-	{
-	    //does nothing, because bicycles doesn't turn on
 	}
 }
