@@ -2,8 +2,12 @@
 
 // TODO refactoriser le code pour respecter le principe LSP de la programmation SOLID
 
+interface Shape
+{
+    public function calculateArea();
+}
 
-class Rectangle 
+class Rectangle implements Shape
 {
     protected $height;
     protected $width; 
@@ -34,15 +38,33 @@ class Rectangle
     }
 }
 
-class Square extends Rectangle {
-    
+class Square implements Shape
+{
+    protected $side;
+
+    public function setSide($side){
+        $this->side = $side;
+    }
+
+    public function getSide() {
+        return $this->side;
+    }
+
+    public function calculateArea()
+    {
+        return $this->side * $this->side;
+    }
 }
 
 class GraphicEditor
 {
-    public function resize(Rectangle $rectangle)
+    public function resize(Shape $shape)
     {
-        $rectangle->setHeight($rectangle->getHeight() * 2);
-        $rectangle->setWidth($rectangle->getWidth() * 4);
+        if($shape instanceof Rectangle) {
+            $shape->setHeight($shape->getHeight() * 2);
+            $shape->setWidth($shape->getWidth() * 4);
+        } elseif ($shape instanceof Square) {
+            $shape->setSide($shape->getSide() * 2);
+        }
     }
 }
