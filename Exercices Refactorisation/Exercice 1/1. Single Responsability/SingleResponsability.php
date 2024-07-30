@@ -11,11 +11,6 @@ class Product {
 
 class Account 
 {
-    private $customer;
-    public function __construct(Customer $customer) {
-        $this->customer = $customer;
-    }
-
     public function getBalance() {}
     public function setBalance() {}
         
@@ -43,18 +38,18 @@ class Sale
     public function getValue() {}
     public function setValue() {}
     
-    public function sell(array $products, Customer $customer, Account $account)
+    public function sell(array $products)
     {
         $value = $this->calculateTotalValue($products);
         
-        if (!$this->account->haveBalanceAvailable($customer, $value)) {
+        if (!$this->account->haveBalanceAvailable($this->customer, $value)) {
             throw new NoBalanceAvailableException();
         }
 
         /*..... something.....*/
         
         $this->setValue($value);
-        $this->calculateBalance($customer);
+        $this->calculateBalance($this->customer);
     }
 
     public function calculateBalance()
